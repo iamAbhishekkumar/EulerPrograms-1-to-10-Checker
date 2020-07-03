@@ -66,16 +66,26 @@ def checker(repo_link):
                 lang = language[getting_file_language(filename)]
                 uid = compileCode(lang, code)
                 flag = 0
+                output, error = None, None
                 while flag == 0:
+                    response = getting_response(uid)
+                    status = response['status']
                     try:
-                        output = getting_response(uid)['output']
-                        if output is not None:
-                            try:
-                                time = getting_response(uid)['time']
-                                result.append([output, euler_answer[i[1]], i[0], float(time)])
-                            except KeyError:
-                                pass
-                            flag = 1
+                        output = response['output']
                     except KeyError:
                         pass
+                    try:
+                        error = response['cmpError']
+                    except KeyError:
+                        pass
+                    if status == "SUCCESS" and output is not None:
+                        try:
+                            time = getting_response(uid)['time']
+                            result.append([output, euler_answer[i[1]], i[0], float(time)])
+                        except KeyError:
+                            pass
+                        flag = 1
+                    elif status == "SUCCESS" and error is not None:
+                        result.append(["Compile Error", i[0]])
+                        flag = 1
     return result
