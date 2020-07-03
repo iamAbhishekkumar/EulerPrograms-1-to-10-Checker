@@ -24,11 +24,15 @@ correct_answer = []
 total_time = 0
 
 for i in result:
-    if "".join(findall(r'\d', i[0])) == i[1]:
-        total_time += i[3]
-        correct_answer.append("yes")
-    else:
-        wrong_answer.append(i[2])
+    try:
+        if i[0] == "Compile Error":
+            wrong_answer.append("Error type : " +i[0]+" in question "+i[1])
+        elif "".join(findall(r'\d', i[0])) != i[1]:
+            total_time += i[3]
+            correct_answer.append("yes")
+
+    except IndexError:
+        pass
 
 if len(correct_answer) == 10 and total_time <= 5:
     print("All are correct answers")
